@@ -2,7 +2,7 @@
 Ohai.plugin(:Magento) do
   depends 'webapps'
   depends 'apache2'
-
+  depends 'nginx_config'
   provides 'webapps/magento'
 
   def get_docroots
