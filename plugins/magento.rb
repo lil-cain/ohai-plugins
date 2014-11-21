@@ -11,11 +11,11 @@ Ohai.plugin(:Magento) do
       # Build hash of docroots to iterate
       nginx_config['vhosts'].each do |_, vhost|
         docroots[vhost['domain']] = vhost['docroot']
-        end
+      end
     end
     unless apache2['vhosts'].empty?
       apache2['vhosts'].each do |_, vhost|
-        vhost.each do |site_name, site|
+        vhost.each do |_site_name, site|
           docroots[site['vhost']] = site['docroot']
         end
       end
