@@ -7,16 +7,20 @@ Ohai.plugin(:Magento) do
 
   def get_docroots
     docroots = {}
-    unless nginx_config['vhosts'].empty?
+    unless nginx_config.nil?
+      unless nginx_config['vhosts'].empty?
       # Build hash of docroots to iterate
-      nginx_config['vhosts'].each do |_, vhost|
-        docroots[vhost['domain']] = vhost['docroot']
-      end
+        nginx_config['vhosts'].each do |_, vhost|
+          docroots[vhost['domain']] = vhost['docroot']
+        end
+      end  
     end
-    unless apache2['vhosts'].empty?
-      apache2['vhosts'].each do |_, vhost|
-        vhost.each do |_site_name, site|
-          docroots[site['vhost']] = site['docroot']
+    unless apache2.nil?
+      unless apache2['vhosts'].empty?
+        apache2['vhosts'].each do |_, vhost|
+          vhost.each do |_site_name, site|
+            docroots[site['vhost']] = site['docroot']
+          end
         end
       end
     end
