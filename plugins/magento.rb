@@ -9,11 +9,10 @@ Ohai.plugin(:Magento) do
     docroots = {}
     unless nginx_config.nil?
       unless nginx_config['vhosts'].empty?
-      # Build hash of docroots to iterate
         nginx_config['vhosts'].each do |_, vhost|
           docroots[vhost['domain']] = vhost['docroot']
         end
-      end  
+      end
     end
     unless apache2.nil?
       unless apache2['vhosts'].empty?
