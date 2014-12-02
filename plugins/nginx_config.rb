@@ -140,7 +140,6 @@ Ohai.plugin(:NginxConfig) do
   end
 
   collect_data(:linux) do
-    nginx = find_nginx
     if find_nginx
       nginx_config Mash.new
       nginx_config[:version]             = get_version

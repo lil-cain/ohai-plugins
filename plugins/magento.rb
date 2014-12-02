@@ -2,16 +2,24 @@
 Ohai.plugin(:Magento) do
   depends 'webapps'
   depends 'apache2'
-
+  depends 'nginx_config'
   provides 'webapps/magento'
 
   def get_docroots
     docroots = {}
-    unless apache2['vhosts'].empty?
-      # Build hash of docroots to iterate
-      apache2['vhosts'].each do |_, vhost|
-        vhost.each do |site_name, site|
-          docroots[site_name] = site['docroot']
+    unless nginx_config.nil?
+      unless nginx_config['vhosts'].empty?
+        nginx_config['vhosts'].each do |_, vhost|
+          docroots[vhost['domain']] = vhost['docroot']
+        end
+      end
+    end
+    unless apache2.nil?
+      unless apache2['vhosts'].empty?
+        apache2['vhosts'].each do |_, vhost|
+          vhost.each do |_site_name, site|
+            docroots[site['vhost']] = site['docroot']
+          end
         end
       end
     end
