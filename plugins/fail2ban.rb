@@ -19,7 +19,7 @@ Ohai.plugin(:Fail2ban) do
     so = shell_out('fail2ban-client status')
     lines = so.stdout.split("\n")
     Ohai::Log.debug("fail2ban status: #{lines}")
-    comma_jails = lines[2].split("\t\t")[1]
+    comma_jails = lines[2].split("\t")[-1]
     list_of_jails = [*comma_jails.split(', ')]
     Ohai::Log.debug("fail2ban jails: #{list_of_jails}")
     list_of_jails
