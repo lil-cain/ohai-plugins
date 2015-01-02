@@ -1,5 +1,4 @@
 require 'net/http'
-require 'mixlib/shellout'
 require 'json'
 
 Ohai.plugin(:Rackconnect) do
@@ -28,12 +27,12 @@ Ohai.plugin(:Rackconnect) do
     ## Raise an exception to be caught if the server returns a 500 error
     fail 'server error' if response.code.to_i >= 500
 
-    return if response.code == '200'
+    return unless response.code == '200'
     json_response = JSON.parse(response.body)
 
     rackconnect[:enabled] = true
 
-    return if json_response.key? 'automation_status'
+    return unless json_response.key? 'automation_status'
     rackconnect[:automation_status] = json_response['automation_status']
   end
 
@@ -41,14 +40,13 @@ Ohai.plugin(:Rackconnect) do
     xenstore_cmd = '/usr/bin/xenstore-read'
     rackconnect_metadata = 'vm-data/user-metadata/rackconnect_automation_status'
 
-    cmd = Mixlib::ShellOut.new("#{xenstore_cmd} #{rackconnect_metadata}")
-    cmd.run_command
+    res = shell_out("#{xenstore_cmd} #{rackconnect_metadata}")
 
-    return if cmd.stderr.empty?
+    return unless res.stderr.empty?
     rackconnect[:enabled] = true
 
     ## Command returns "\"DEPLOYED\"\n" so lets remove the extra
-    automation_status = cmd.stdout.chomp.gsub('"', '')
+    automation_status = res.stdout.chomp.gsub('"', '')
     rackconnect[:automation_status] = automation_status
   end
 
