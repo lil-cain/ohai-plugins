@@ -20,4 +20,8 @@ describe 'Magento Plugin' do
     expect(magento['magento.example.com']['version']).to be_a(String)
   end
 
+  it 'should report edition' do
+    expect(magento['magento.example.com']['edition']).to be_a(String)
+  end
+
 end
