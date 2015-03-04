@@ -40,11 +40,13 @@ Ohai.plugin(:Magento) do
           Find.prune if excludes.include?(File.basename(path))
           Find.prune if path.scan(/\//).count > max_depth
           if path.include?('Mage.php')
+            release_details = get_version_and_edition(path)
             found[site_name] = {
               path: path,
-              version: get_version(path) || 'Unknown'
+              version: release_details[:version],
+              edition: release_details[:edition]
             }
-            # break
+            break
           end
         end
       end
@@ -53,15 +55,20 @@ Ohai.plugin(:Magento) do
     return found unless found.empty?
   end
 
-  def get_version(path)
-    version = nil
+  def get_version_and_edition(path)
     version_file = File.join(path)
+    edition_list = Hash.new
+    edition_assign = String.new
     raw_lines = Hash.new
+    version = String.new
+    edition = String.new
+
+
     file = File.open(version_file)
     begin
       # rubocop:disable Next
       file.each_line do |line|
-        if line.include?('=>')
+        if line.include?('=>')                    # version assignment
           %w(major minor revision patch stability number).each do |s|
             tmp_line = line.split('=>')
             tmp_line[1] = tmp_line[1].gsub(/\D/, '')
@@ -72,16 +79,25 @@ Ohai.plugin(:Magento) do
             end
             break unless raw_lines.count < 6
           end
+        elsif line.include?('const EDITION_')     # build edition list from file
+          tmp_line = line.split('=')
+          identifier = tmp_line[0].split(' ')[1].strip
+          version = tmp_line[1].gsub(/[^\w]/, '')
+          edition_list[identifier] = version
+        elsif line.include?('static private $_currentEdition =') # edition assignment
+          edition_assign = line.split('=')[1].split('::')[1].gsub(/[^\w]/, '')
         end
       end
       # rubocop:enable Next
       version = raw_lines.values.join('.')
+      edition = edition_list[edition_assign]
     ensure
       file.close
     end
-    return version if version
+    return {:version => version || 'Unknown',
+            :edition => edition || 'Unknown'}
   end
-
+ # static private $_currentEdition = self::EDITION_COMMUNITY;
   collect_data do
     docroots = get_docroots
     found = find_magento(docroots) unless docroots.nil?
