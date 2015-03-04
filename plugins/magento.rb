@@ -63,12 +63,11 @@ Ohai.plugin(:Magento) do
     version = String.new
     edition = String.new
 
-
     file = File.open(version_file)
     begin
       # rubocop:disable Next
       file.each_line do |line|
-        if line.include?('=>')                    # version assignment
+        if line.include?('=>')        # version assignment
           %w(major minor revision patch stability number).each do |s|
             tmp_line = line.split('=>')
             tmp_line[1] = tmp_line[1].gsub(/\D/, '')
@@ -79,12 +78,12 @@ Ohai.plugin(:Magento) do
             end
             break unless raw_lines.count < 6
           end
-        elsif line.include?('const EDITION_')     # build edition list from file
+        elsif line.include?('const EDITION_')  # build edition list from file
           tmp_line = line.split('=')
           identifier = tmp_line[0].split(' ')[1].strip
           version = tmp_line[1].gsub(/[^\w]/, '')
           edition_list[identifier] = version
-        elsif line.include?('static private $_currentEdition =') # edition assignment
+        elsif line.include?('static private $_currentEdition =') # find edition
           edition_assign = line.split('=')[1].split('::')[1].gsub(/[^\w]/, '')
         end
       end
@@ -94,10 +93,10 @@ Ohai.plugin(:Magento) do
     ensure
       file.close
     end
-    return {:version => version || 'Unknown',
-            :edition => edition || 'Unknown'}
+    return { version: version || 'Unknown',
+             edition: edition || 'Unknown' }
   end
- # static private $_currentEdition = self::EDITION_COMMUNITY;
+
   collect_data do
     docroots = get_docroots
     found = find_magento(docroots) unless docroots.nil?
