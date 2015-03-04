@@ -35,15 +35,17 @@ Ohai.plugin(:Magento) do
                   'errors', 'js', 'pkginfo', 'shell', 'skin']
       max_depth = site_path.scan(/\//).count + 2
       # rubocop:disable Next
-      Find.find(site_path) do |path|
-        Find.prune if excludes.include?(File.basename(path))
-        Find.prune if path.scan(/\//).count > max_depth
-        if path.include?('Mage.php')
-          found[site_name] = {
-            path: path,
-            version: get_version(path) || 'Unknown'
-          }
-          break
+      if File.directory?(site_path)   # Added to handle none existent docroots
+        Find.find(site_path) do |path|
+          Find.prune if excludes.include?(File.basename(path))
+          Find.prune if path.scan(/\//).count > max_depth
+          if path.include?('Mage.php')
+            found[site_name] = {
+              path: path,
+              version: get_version(path) || 'Unknown'
+            }
+            # break
+          end
         end
       end
       # rubocop:enable Next
