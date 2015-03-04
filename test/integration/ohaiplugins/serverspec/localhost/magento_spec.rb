@@ -8,7 +8,7 @@ describe 'Magento Plugin' do
   end
 
   it 'should report vhost' do
-    expect(magento.keys[1]).to eql('magento.example.com')
+    expect(magento.keys.join).to eql('magento.example.com')
   end
 
   it 'should report path' do
