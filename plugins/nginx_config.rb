@@ -93,6 +93,7 @@ Ohai.plugin(:NginxConfig) do
     vhosts = {}
     domain = nil
     docroot = nil
+    listen = nil
     file = File.read(@conf_path)
     begin
       file.each_line do |l|
@@ -111,6 +112,8 @@ Ohai.plugin(:NginxConfig) do
           domain = ll.split[1].chomp(';')
         when /^root/
           docroot = ll.split[1].chomp(';')
+        when /^listen/
+          listen = ll.split[1].chomp(';')
           else
           next
           end
@@ -119,6 +122,7 @@ Ohai.plugin(:NginxConfig) do
         vhosts[domain] = {}
         vhosts[domain]['domain'] = domain
         vhosts[domain]['docroot'] = docroot
+        vhosts[domain]['listen'] = listen
       end
     end
     vhosts
