@@ -30,11 +30,11 @@ Ohai.plugin(:Magento) do
     require 'find'
 
     found = {}
+    # rubocop:disable Next
     docroots.each do |site_name, site_path|
       excludes = ['.git', '.svn', 'images', 'includes', 'lib', 'downloader',
                   'errors', 'js', 'pkginfo', 'shell', 'skin']
       max_depth = site_path.scan(/\//).count + 2
-      # rubocop:disable Next
       if File.directory?(site_path)   # Added to handle none existent docroots
         Find.find(site_path) do |path|
           Find.prune if excludes.include?(File.basename(path))
