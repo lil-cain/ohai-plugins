@@ -11,9 +11,9 @@ Ohai.plugin(:Postfix) do
   def find_postfix_process
     unless @postfix_process
       postfix_process = {}
-      so = shell_out("ps aux | grep [m]aster | awk '{print $2 \", \"$11}' ")
+      so = shell_out('pgrep -a master')
       if !so.stdout.empty?
-        ps_output = so.stdout.split(', ')
+        ps_output = so.stdout.split()
         postfix_process = { 'Master Process PID' => ps_output[0].chomp,
                             'Master Process' => ps_output[1].chomp }
       else
