@@ -32,6 +32,7 @@ Ohai.plugin(:Magento) do
     found = {}
     # rubocop:disable Next
     docroots.each do |site_name, site_path|
+      next unless File.directory? site_path
       excludes = ['.git', '.svn', 'images', 'includes', 'lib', 'downloader',
                   'errors', 'js', 'pkginfo', 'shell', 'skin']
       max_depth = site_path.scan(/\//).count + 2
