@@ -13,7 +13,7 @@ Ohai.plugin(:Postfix) do
       postfix_process = {}
       so = shell_out('pgrep -a master')
       if !so.stdout.empty?
-        ps_output = so.stdout.split()
+        ps_output = so.stdout.split
         postfix_process = { 'Master Process PID' => ps_output[0].chomp,
                             'Master Process' => ps_output[1].chomp }
       else
