@@ -8,7 +8,7 @@ describe 'Magento Plugin' do
   end
 
   it 'should report vhost' do
-    expect(magento.keys[1]).to eql('magento.example.com')
+    expect(magento.keys.join).to eql('magento.example.com')
   end
 
   it 'should report path' do
@@ -18,6 +18,10 @@ describe 'Magento Plugin' do
 
   it 'should report version' do
     expect(magento['magento.example.com']['version']).to be_a(String)
+  end
+
+  it 'should report edition' do
+    expect(magento['magento.example.com']['edition']).to be_a(String)
   end
 
 end
