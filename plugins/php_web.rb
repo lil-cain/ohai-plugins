@@ -49,6 +49,22 @@ Ohai.plugin(:PHPWeb) do
     return file_locs
   end
 
+  def php_modules
+    command = "#{php_bin} -m"
+    so = shell_out(command)
+    modules = {}
+    so.lines.each do |line|
+      line = line.strip
+      if line[0] == '[' && line[-1] == ']'
+        module_type = line[1..-2]
+        modules[module_type] = []
+      else
+        modules[module_type].push(line)
+      end
+    end
+    return modules
+  end
+
   def php_bin
     unless @php_bin
       so = shell_out("/bin/bash -c 'command -v php'")
@@ -62,6 +78,7 @@ Ohai.plugin(:PHPWeb) do
     if php_bin
       php_web Mash.new
       php_web[:bin] = php_bin
+      php_web[:modules] = php_modules
       startup_errors = get_startup_errors
       if startup_errors.size > 0
         php_web[:startup_errors] = true
