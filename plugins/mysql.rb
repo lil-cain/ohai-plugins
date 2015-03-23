@@ -38,8 +38,8 @@ Ohai.plugin(:Mysql) do
     return mysqladmin_bin unless mysqladmin_bin.empty?
   end
 
-  def mysql_config(input)
-    command = "#{mysql_bin} -Bse 'show global #{input}'"
+  def mysql_show(input)
+    command = "#{mysql_bin} -Bse 'show #{input}'"
 
     output = {}
     so = shell_out(command)
@@ -50,14 +50,57 @@ Ohai.plugin(:Mysql) do
     return output
   end
 
+  def mysql_processes
+    command = "#{mysql_bin} -Bse 'show full processlist;"
+    output = []
+    so = shell_out(command)
+    so.stdout.line do |line|
+      process = {}
+      line = line.split("\t")
+      process[:id] = line[0]
+      process[:host] = line[2]
+      process[:db] = line[3]
+      process[:command] = line[4]
+      process[:time] = line[5]
+      process[:state] = line[6]
+      process[:info] = line[7]
+      if length(line) == 9
+        process[:progress] = line[8]
+      end
+      output.push(process)
+    end
+    return output
+  end
+
+  def mysql_replicant_user
+    command = "#{mysql_bin} -Bse 'select user, host from mysql.user;'"
+
+    users = {}
+    so = shell_out(command)
+    so.stdout.lines do |line|
+      line = line.split("\t")
+      if line[0] != ''
+        user = line[0]
+        if user.start_with? 'repl'
+          return true
+        end
+      end
+    return false
+    end
+  end
+      
+
   collect_data(:linux) do
     # Make sure we are on a MySQL Server and have the `mysql` command
     if mysql_bin && mysqlserver_bin
       mysql Mash.new
       mysql[:bin] = mysqlserver_bin
       mysql[:status] = mysql_status
-      mysql[:mysql_variables] = mysql_config('variables')
-      mysql[:mysql_status] = mysql_config('status')
+      mysql[:mysql_variables] = mysql_show('global variables')
+      mysql[:mysql_status] = mysql_show('global status')
+      mysql[:mysql_slave_status] = mysql_show('slave status')
+      mysql[:replication_user] = mysql_replicant_user
+      mysql[:processes] = mysql_processes
     end
   end
 end

@@ -47,4 +47,9 @@ describe "MySQL Plugin" do
   	expect(mysql['mysql_variables']['max_connections'].to_i).to be >= 1
   end
 
+  it "should find processes" do
+        expect(mysql['processes']).to be_a(Mash)
+        expect(mysql['processes']).not_to be_empty
+  end
+
 end
