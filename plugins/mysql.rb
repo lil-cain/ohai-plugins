@@ -50,6 +50,7 @@ Ohai.plugin(:Mysql) do
     return output
   end
 
+  # rubocop:disable Metrics/AbcSize
   def mysql_processes
     command = "#{mysql_bin} -Bse 'show full processlist;"
     output = []
@@ -64,9 +65,7 @@ Ohai.plugin(:Mysql) do
       process[:time] = line[5]
       process[:state] = line[6]
       process[:info] = line[7]
-      if length(line) == 9
-        process[:progress] = line[8]
-      end
+      process[:progress] = line[8] if length(line) == 9
       output.push(process)
     end
     return output
@@ -75,20 +74,16 @@ Ohai.plugin(:Mysql) do
   def mysql_replicant_user
     command = "#{mysql_bin} -Bse 'select user, host from mysql.user;'"
 
-    users = {}
     so = shell_out(command)
     so.stdout.lines do |line|
       line = line.split("\t")
       if line[0] != ''
         user = line[0]
-        if user.start_with? 'repl'
-          return true
-        end
+        return true if user.start_with? 'repl'
       end
-    return false
+      return false
     end
   end
-      
 
   collect_data(:linux) do
     # Make sure we are on a MySQL Server and have the `mysql` command
