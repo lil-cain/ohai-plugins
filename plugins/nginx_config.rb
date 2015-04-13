@@ -132,7 +132,7 @@ Ohai.plugin(:NginxConfig) do
   end
 
   def get_conf_errors
-    return execute_nginx('-t')[:stderr] if get_conf_valid
+    return execute_nginx('-t')[:stderr] if !get_conf_valid
     return ''
   end
 
