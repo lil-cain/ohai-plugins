@@ -48,8 +48,7 @@ describe "MySQL Plugin" do
   end
 
   it "should find processes" do
-        expect(mysql['processes']).to be_a(Mash)
-        expect(mysql['processes']).not_to be_empty
+        expect(mysql['processes']).to be_a(Array)
   end
 
 end
