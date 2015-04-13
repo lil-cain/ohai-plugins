@@ -55,7 +55,7 @@ Ohai.plugin(:Mysql) do
     command = "#{mysql_bin} -Bse 'show full processlist;"
     output = []
     so = shell_out(command)
-    so.stdout.line do |line|
+    so.stdout.lines do |line|
       process = {}
       line = line.split("\t")
       process[:id] = line[0]
