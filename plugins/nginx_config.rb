@@ -78,12 +78,11 @@ Ohai.plugin(:NginxConfig) do
   def execute_nginx(flags = '')
     @v_data ||= {}
     return @v_data[flags] if @v_data[flags]
-    status, stdout, stderr = run_command(no_status_check => true,
-                                         command => "nginx #{flags}")
+    so = shell_out("nginx #{flags}")
     return @v_data[flags] = {
-      status: status,
-      stdout: stdout,
-      stderr: stderr
+      status: so.status,
+      stdout: so.stdout,
+      stderr: so.stderr
     }
   end
 
