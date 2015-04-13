@@ -113,9 +113,9 @@ Ohai.plugin(:NginxConfig) do
           docroot = ll.split[1].chomp(';')
         when /^listen/
           listen = ll.split[1].chomp(';')
-          else
+        else
           next
-          end
+        end
       end
       unless domain.nil?
         vhosts[domain] = {}
@@ -132,7 +132,7 @@ Ohai.plugin(:NginxConfig) do
   end
 
   def get_conf_errors
-    return execute_nginx('-t')[:stderr] if !get_conf_valid
+    return execute_nginx('-t')[:stderr] unless get_conf_valid
     return ''
   end
 
