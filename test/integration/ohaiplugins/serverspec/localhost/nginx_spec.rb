@@ -2,6 +2,8 @@
 require 'spec_helper'
 
 nginx = OHAI['nginx_config']
+family = OHAI['platform_family']
+version = OHAI['platform_version'].to_i
 
 describe 'Nginx Config' do
 
@@ -17,8 +19,16 @@ describe 'Nginx Config' do
     expect(nginx['configure_arguments']).to include('--with-http_ssl_module')
   end
 
-  it 'should report the prefix' do
-    expect(nginx['prefix']).to eql('/usr/share/nginx')
+  # Skip test on Debian 6 and Ubuntu 10.04 because they do
+  # not include 'prefix' in `nginx -V` output.
+  unless family == 'debian' && [6, 10].include?(version)
+    it 'should report the prefix' do
+      if family == 'debian' && [12, 7].include?(version)
+        expect(nginx['prefix']).to eql('/etc/nginx')
+      else
+        expect(nginx['prefix']).to eql('/usr/share/nginx')
+      end
+    end
   end
 
   it 'should report configuration path' do
