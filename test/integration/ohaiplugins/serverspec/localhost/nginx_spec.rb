@@ -1,7 +1,6 @@
 # Encoding: utf-8
 require 'spec_helper'
 
-cronjobs = OHAI['cronjobs']['root'][0]
 nginx = OHAI['nginx_config']
 
 describe 'Nginx Config' do
