@@ -66,14 +66,6 @@ describe "Postfix Plugin" do
         expect(postfix['postfix_binary']).to eql('/usr/sbin/postfix')
     end
 
-    it 'should have postfix pid' do
-        expect(postfix['process']['Master Process PID']).to eql(postfix_process['pid'])
-    end
-
-    it 'should have postfix command' do
-       expect(postfix['process']['Master Process']).to eql(postfix_process['command'])
-    end
-
     it 'should have a postfix package version' do
         expect(postfix['postfix_package']['version']).to eql(postfix_version)
     end

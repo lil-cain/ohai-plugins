@@ -3,7 +3,7 @@ require 'spec_helper'
 
 platform_family = OHAI['platform_family']
 
-if platform_family == 'rhel'
+if platform_family == 'rhel' && OHAI['platform_version'].to_i >= 6
   rhcssvcs = OHAI['rhcs_services']
   rhcsnodes = OHAI['rhcs_nodes']
 
