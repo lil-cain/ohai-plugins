@@ -13,13 +13,12 @@ Ohai.plugin(:Fstab) do
     entry_hash = Hash.new
     fstab_entries.each do |entry|
       line = entry.split
-      unless line.empty?
-        entry_hash[line[0]] = { 'mount point' => line[1],
-                                'type' => line[2],
-                                'options' => line[3].split("'"),
-                                'dump' => line[4],
-                                'pass' => line[5] }
-      end
+      next if line.empty?
+      entry_hash[line[0]] = { 'mount point' => line[1],
+                              'type' => line[2],
+                              'options' => line[3].split("'"),
+                              'dump' => line[4],
+                              'pass' => line[5] }
     end
     fstab_return['fstab'] = entry_hash
     fstab.merge!(fstab_return) unless fstab_return.empty?
