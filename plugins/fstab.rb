@@ -13,6 +13,7 @@ Ohai.plugin(:Fstab) do
     entry_hash = Hash.new
     fstab_entries.each do |entry|
       line = entry.split
+      next if line.empty?
       entry_hash[line[0]] = { 'mount point' => line[1],
                               'type' => line[2],
                               'options' => line[3].split("'"),

@@ -18,6 +18,7 @@ Ohai.plugin(:PHPWeb) do
   end
   #rubocop:enable all
 
+  # rubocop:disable Metrics/AbcSize
   def get_apache_errors
     php_web[:status] = 1
     if File.exist?('/var/log/apache2')
@@ -41,6 +42,7 @@ Ohai.plugin(:PHPWeb) do
 
     return errors
   end
+  # rubocop:enable Metrics/AbcSize
 
   def weblog_file_locations
     file_locs = []
@@ -52,15 +54,10 @@ Ohai.plugin(:PHPWeb) do
   def php_modules
     command = "#{php_bin} -m"
     so = shell_out(command)
-    modules = {}
-    so.lines.each do |line|
+    modules = []
+    so.stdout.lines do |line|
       line = line.strip
-      if line[0] == '[' && line[-1] == ']'
-        module_type = line[1..-2]
-        modules[module_type] = []
-      else
-        modules[module_type].push(line)
-      end
+      modules << line unless (line[0] == '[' && line[-1] == ']') || line.empty?
     end
     return modules
   end
