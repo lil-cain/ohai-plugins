@@ -53,7 +53,7 @@ Ohai.plugin(:PHPWeb) do
     command = "#{php_bin} -m"
     so = shell_out(command)
     modules = {}
-    so.lines.each do |line|
+    so.stdout.lines.each do |line|
       line = line.strip
       if line[0] == '[' && line[-1] == ']'
         module_type = line[1..-2]
